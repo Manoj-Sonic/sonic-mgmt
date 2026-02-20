@@ -28,6 +28,12 @@ DUT_ABSENT_TIMEOUT_FOR_MEMORY_EXHAUSTION = 240
 MAX_COOL_OFF_TIME = 300
 
 
+@pytest.fixture(params=["gnoi_based", "cli_based"])
+def invocation_type(request):
+    """Parametrize reboot tests to run with both gNOI and CLI reboot paths."""
+    return request.param
+
+
 def test_dpu_status_post_switch_reboot(duthosts, dpuhosts,
                                        enum_rand_one_per_hwsku_hostname,
                                        localhost,
@@ -276,7 +282,8 @@ def test_dpu_check_post_dpu_mem_exhaustion(duthosts, dpuhosts,
 
 
 def test_cold_reboot_dpus(duthosts, dpuhosts, enum_rand_one_per_hwsku_hostname,
-                          platform_api_conn, num_dpu_modules):  # noqa: F811, E501
+                          localhost, platform_api_conn, num_dpu_modules,
+                          invocation_type):  # noqa: F811, E501
     """
     Test to cold reboot all DPUs in the DUT.
     Steps:
@@ -299,7 +306,7 @@ def test_cold_reboot_dpus(duthosts, dpuhosts, enum_rand_one_per_hwsku_hostname,
     with SafeThreadPoolExecutor(max_workers=num_dpu_modules) as executor:
         logging.info("Rebooting all DPUs in parallel")
         for dpu_name in dpu_on_list:
-            executor.submit(perform_reboot, duthost, REBOOT_TYPE_COLD, dpu_name)
+            executor.submit(perform_reboot, duthost, REBOOT_TYPE_COLD, dpu_name, invocation_type, localhost)
 
     logging.info("Executing post test dpu check")
     post_test_dpus_check(duthost, dpuhosts,
