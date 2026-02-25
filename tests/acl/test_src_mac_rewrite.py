@@ -6,7 +6,6 @@ for ACL rules that can rewrite the inner source MAC address of VXLAN-encapsulate
 """
 
 import os
-import time
 import logging
 import pytest
 import json
@@ -182,11 +181,7 @@ def fixture_setUp(rand_selected_dut, tbinfo, ptfadapter):
     )
 
     # Wait for configuration to be applied
-    time.sleep(15)
-
-    # Verify configuration was applied
-    output = rand_selected_dut.shell("show vnet route all")["stdout"]
-    if "150.0.3.1/32" not in output or "Vnet1" not in output:
+    if not wait_until(30, 5, 5, _check_vnet_route, rand_selected_dut):
         pytest.fail("VNET route not found in 'show vnet route all'")
 
     return data
@@ -208,7 +203,8 @@ def fixture_tearDown(setUp):
 
 def get_acl_counter(duthost, table_name, rule_name, timeout=ACL_COUNTERS_UPDATE_INTERVAL):
     # Wait for orchagent to update the ACL counters
-    time.sleep(timeout)
+    if timeout > 0:
+        wait_until(timeout, 2, 0, _check_acl_counter_updated, duthost, table_name, rule_name, 0)
     result = duthost.show_and_parse('aclshow -a')
 
     if not result:
@@ -255,7 +251,15 @@ def setup_acl_table_type(duthost, acl_type_name=ACL_TABLE_TYPE):
     logger.info("Loading ACL table type definition using config load")
     duthost.shell(f"config load -y {acl_type_file}")
 
-    time.sleep(10)
+    def _check_acl_table_type_in_config_db(duthost, type_name):
+        result = duthost.shell(
+            f'redis-cli -n 4 EXISTS "ACL_TABLE_TYPE|{type_name}"', module_ignore_errors=True
+        ).get("stdout", "0")
+        return result.strip() == "1"
+
+    pytest_assert(wait_until(30, 5, 2, _check_acl_table_type_in_config_db, duthost, acl_type_name),
+                  f"ACL table type {acl_type_name} not found in CONFIG_DB")
+    logger.info("ACL table type %s loaded", acl_type_name)
 
 
 def setup_acl_table(duthost, ports):
@@ -271,7 +275,8 @@ def setup_acl_table(duthost, ports):
 
     logger.info(f"Creating ACL table {ACL_TABLE_NAME} with ports: {ports}")
     duthost.shell(cmd)
-    time.sleep(10)
+    pytest_assert(wait_until(30, 5, 2, _check_acl_table_present, duthost, ACL_TABLE_NAME),
+                  f"ACL table {ACL_TABLE_NAME} not found after creation")
 
     # === Show ACL Table Verification ===
     logger.info("Verifying ACL table state using 'show acl table'")
@@ -304,7 +309,8 @@ def remove_acl_table(duthost):
         logger.warning(f"Failed to remove ACL table via config command. Output:\n{result.get('stdout', '')}")
         pytest.fail(f"Failed to remove ACL table {ACL_TABLE_NAME}")
 
-    time.sleep(10)
+    pytest_assert(wait_until(30, 5, 2, _check_acl_table_absent, duthost, ACL_TABLE_NAME),
+                  f"ACL table {ACL_TABLE_NAME} was not removed from STATE_DB")
 
     logger.info(f"Verifying ACL table {ACL_TABLE_NAME} was removed from STATE_DB")
     db_cmd = f"redis-cli -n 6 KEYS 'ACL_TABLE_TABLE:{ACL_TABLE_NAME}'"
@@ -349,7 +355,8 @@ def setup_acl_rules(duthost, inner_src_ip, vni, new_src_mac):
         pytest.fail("Failed to load ACL rule configuration")
 
     logger.info("Waiting for ACL rule to be applied...")
-    time.sleep(15)  # Increased wait time
+    pytest_assert(wait_until(30, 5, 2, _check_acl_rule_active, duthost, ACL_TABLE_NAME, "rule_1"),
+                  f"ACL rule rule_1 not active in table {ACL_TABLE_NAME}")
 
     # Check CONFIG_DB for the rule
     logger.info("Checking if rule was added to CONFIG_DB...")
@@ -438,7 +445,16 @@ def modify_acl_rule(duthost, inner_src_ip, vni, new_src_mac):
     logger.info("Updated rule content in CONFIG_DB:\n%s", updated_rule)
 
     logger.info("Waiting for CONFIG_DB changes to propagate to STATE_DB...")
-    time.sleep(15)
+
+    def _check_state_db_mac_updated(duthost, table_name, expected_mac):
+        state_db_key = f"ACL_RULE_TABLE|{table_name}|rule_1"
+        output = duthost.shell(
+            f'redis-cli -n 6 HGETALL "{state_db_key}"', module_ignore_errors=True
+        ).get("stdout", "")
+        return "Active" in output
+
+    pytest_assert(wait_until(30, 5, 2, _check_state_db_mac_updated, duthost, ACL_TABLE_NAME, new_src_mac),
+                  f"ACL rule modification not propagated to STATE_DB")
 
     # Verify the modification in STATE_DB
     logger.info("Verifying ACL rule modification in STATE_DB...")
@@ -464,7 +480,8 @@ def remove_acl_rules(duthost):
     duthost.copy(src=os.path.join(FILES_DIR, ACL_REMOVE_RULES_FILE), dest=TMP_DIR)
     remove_rules_dut_path = os.path.join(TMP_DIR, ACL_REMOVE_RULES_FILE)
     duthost.command("acl-loader update full {} --table_name {}".format(remove_rules_dut_path, ACL_TABLE_NAME))
-    time.sleep(10)
+    pytest_assert(wait_until(30, 5, 2, _check_acl_rule_absent, duthost, ACL_TABLE_NAME, "rule_1"),
+                  f"ACL rule rule_1 not removed from STATE_DB")
 
     # === STATE_DB Deletion Check ===
     logger.info("Checking STATE_DB to confirm ACL rule deletion...")
@@ -515,11 +532,16 @@ def create_vxlan_vnet_config(duthost, tunnel_name, src_ip, portchannel_name="Por
     # Clean up temp file
     duthost.shell("rm /tmp/config_db_vxlan_vnet.json")
 
-    time.sleep(20)  # wait for DUT to come up after reload
+    def _check_vxlan_tunnel_config(duthost, tunnel_name):
+        result = duthost.shell(
+            f'redis-cli -n 4 EXISTS "VXLAN_TUNNEL|{tunnel_name}"', module_ignore_errors=True
+        ).get("stdout", "0")
+        return result.strip() == "1"
+
+    pytest_assert(wait_until(60, 5, 5, _check_vxlan_tunnel_config, duthost, tunnel_name),
+                  f"VXLAN tunnel {tunnel_name} not found in CONFIG_DB")
 
     ecmp_utils.configure_vxlan_switch(duthost, vxlan_port=VXLAN_UDP_PORT, dutmac=router_mac)
-
-    time.sleep(5)  # Give time for config to apply
 
 
 def backup_config(duthost):
