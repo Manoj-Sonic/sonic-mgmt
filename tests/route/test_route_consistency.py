@@ -128,6 +128,15 @@ class TestRouteConsistency():
                 return False
         return True
 
+    def routes_have_changed(self, duthosts, previous_route_snapshot):
+        """Check that the route table has changed from a previous snapshot, indicating
+           routes have been withdrawn or otherwise modified."""
+        new_route_snapshot, _ = self.get_route_prefix_snapshot_from_asicdb(duthosts)
+        for dut_instance_name in previous_route_snapshot.keys():
+            if previous_route_snapshot[dut_instance_name] != new_route_snapshot[dut_instance_name]:
+                return True
+        return False
+
     def test_route_withdraw_advertise(self, duthosts, tbinfo, localhost):
 
         # withdraw the routes
@@ -137,7 +146,9 @@ class TestRouteConsistency():
         try:
             logger.info("withdraw ipv4 and ipv6 routes for {}".format(topo_name))
             localhost.announce_routes(topo_name=topo_name, ptf_ip=ptf_ip, action="withdraw", path="../ansible/")
-            time.sleep(self.sleep_interval)
+            pytest_assert(wait_until(self.sleep_interval, 10, 0, self.routes_have_changed,
+                                     duthosts, self.pre_test_route_snapshot),
+                          "Routes were not withdrawn within the expected timeout")
 
             """ compare the number of routes withdrawn from all the DUTs. In working condition, the number of routes
                 withdrawn should be same across all the DUTs.
@@ -185,20 +196,19 @@ class TestRouteConsistency():
 
             logger.info("advertise ipv4 and ipv6 routes for {}".format(topo_name))
             localhost.announce_routes(topo_name=topo_name, ptf_ip=ptf_ip, action="announce", path="../ansible/")
-            time.sleep(self.sleep_interval)
 
-            assert wait_until(300, 10, 0, self.route_snapshots_match, duthosts, self.pre_test_route_snapshot), (
-                "Route snapshots did not match within the specified timeout for DUT hosts: '{}'.".format(
-                    duthosts
-                )
-            )
+            pytest_assert(wait_until(self.sleep_interval + 300, 10, 0, self.route_snapshots_match,
+                                     duthosts, self.pre_test_route_snapshot),
+                          "Route snapshots did not match within the specified timeout for DUT hosts: '{}'."
+                          .format(duthosts))
 
             logger.info("Route table is consistent across all the DUTs")
         except Exception as e:
             logger.error("Exception occurred: {}".format(e))
             # announce the routes back in case of any exception
             localhost.announce_routes(topo_name=topo_name, ptf_ip=ptf_ip, action="announce", path="../ansible/")
-            time.sleep(self.sleep_interval)
+            wait_until(self.sleep_interval, 10, 0, self.route_snapshots_match,
+                       duthosts, self.pre_test_route_snapshot)
             raise e
 
     def test_bgp_shut_noshut(self, duthosts, enum_rand_one_per_hwsku_frontend_hostname, tbinfo, localhost):
@@ -208,7 +218,9 @@ class TestRouteConsistency():
         try:
             logger.info("shutdown bgp sessions for {}".format(duthost.hostname))
             duthost.shell("sudo config bgp shutdown all")
-            time.sleep(self.sleep_interval)
+            pytest_assert(wait_until(self.sleep_interval, 10, 0, self.routes_have_changed,
+                                     duthosts, self.pre_test_route_snapshot),
+                          "Routes were not withdrawn after BGP shutdown")
 
             post_withdraw_route_snapshot, _ = self.get_route_prefix_snapshot_from_asicdb(duthosts)
             num_routes_withdrawn = 0
@@ -233,7 +245,9 @@ class TestRouteConsistency():
 
             logger.info("startup bgp sessions for {}".format(duthost.hostname))
             duthost.shell("sudo config bgp startup all")
-            time.sleep(self.sleep_interval)
+            pytest_assert(wait_until(self.sleep_interval, 10, 0, self.route_snapshots_match,
+                                     duthosts, self.pre_test_route_snapshot),
+                          "Routes did not recover after BGP startup")
 
             # take the snapshot of route table from all the DUTs
             post_test_route_snapshot, _ = self.get_route_prefix_snapshot_from_asicdb(duthosts)
@@ -247,7 +261,7 @@ class TestRouteConsistency():
         except Exception:
             # startup bgp back in case of any exception
             duthost.shell("sudo config bgp startup all")
-            time.sleep(self.sleep_interval)
+            wait_until(self.sleep_interval, 10, 0, is_all_neighbor_session_established, duthost)
 
     @pytest.mark.disable_loganalyzer
     @pytest.mark.parametrize("container_name, program_name", [
@@ -275,7 +289,9 @@ class TestRouteConsistency():
                 if id is None:
                     id = ""
                 check_and_kill_process(duthost, container_name + str(id), program_name)
-            time.sleep(30)
+            pytest_assert(wait_until(60, 5, 0, self.routes_have_changed,
+                                     duthosts, self.pre_test_route_snapshot),
+                          "Routes did not change after killing {}".format(program_name))
 
             post_withdraw_route_snapshot, _ = self.get_route_prefix_snapshot_from_asicdb(duthosts)
             num_routes_withdrawn = 0
@@ -300,7 +316,9 @@ class TestRouteConsistency():
             logger.info("Recover containers on {}".format(duthost.hostname))
             config_reload(duthost)
             wait_until(300, 10, 0, is_all_neighbor_session_established, duthost)
-            time.sleep(self.sleep_interval)
+            pytest_assert(wait_until(self.sleep_interval, 10, 0, self.route_snapshots_match,
+                                     duthosts, self.pre_test_route_snapshot),
+                          "Routes did not recover after config reload")
 
             # take the snapshot of route table from all the DUTs
             post_test_route_snapshot, _ = self.get_route_prefix_snapshot_from_asicdb(duthosts)
@@ -315,4 +333,4 @@ class TestRouteConsistency():
             # startup bgpd back in case of any exception
             logger.info("Encountered error. Perform a config reload to recover!")
             config_reload(duthost)
-            time.sleep(self.sleep_interval)
+            wait_until(self.sleep_interval, 10, 0, is_all_neighbor_session_established, duthost)
