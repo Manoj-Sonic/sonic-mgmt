@@ -44,7 +44,9 @@ Verify that SONiC Zero Touch Provisioning (ZTP) successfully executes a single c
 - Ensure the switch out of band interface (eth0) has connectivity to the DHCP server.
 - Configure the DHCP server to provide Option 67 pointing to the ZTP JSON file hosted on the ZTP web server.
 - Prepare a ZTP JSON file with a single configuration section referencing the config_db.json:
+
 JSON Sample:
+
 ```
 {
   "ztp": {
