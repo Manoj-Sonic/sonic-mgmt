@@ -25,6 +25,7 @@ The purpose of the test is to verify the Zero Touch Provisioning (ZTP) feature o
 
 ### Testbed
 T1
+
 In the T1 topology we have the ptf container where we need to install DHCP Server, ZTP Server with http, ftp, https
 
 ## Setup configuration
