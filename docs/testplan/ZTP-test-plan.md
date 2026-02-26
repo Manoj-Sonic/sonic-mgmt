@@ -17,11 +17,11 @@
    * [Test cases](#test-cases)
      
 ## Overview
-This is Test Plan to test ZTP feature on SONiC. The test enables MPLS on interfaces, configures static LSPs and assumes all basic configurations including BGP routes are already preconfigured.
+This is a test plan to validate the Zero Touch Provisioning (ZTP) feature on SONiC. The test covers automated provisioning via management interface, including firmware installation and configuration loading.
 
 ### Scope
-The test is targeting a running SONiC system with basic functioning configuration.
-Purpose of the test is to verify MPLS on a SONiC system bringing up the ingress, transit or egress static LSP and forwarding the traffic correctly.
+The test is targeting a running SONiC system with basic network connectivity.
+The purpose of the test is to verify the Zero Touch Provisioning (ZTP) feature on a SONiC system, ensuring that the device can automatically download and apply firmware and configuration files via the management interface, and complete the provisioning process successfully.
 
 ### Testbed
 T1
