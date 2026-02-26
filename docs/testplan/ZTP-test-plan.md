@@ -33,7 +33,7 @@ sudo config ztp enable
 sudo config ztp run -y
 show config ztp
 
-# IPv4 ZTP via http/ftp/https
+# IPv4 ZTP via http ftp https
 
 ## Test Cases
 
