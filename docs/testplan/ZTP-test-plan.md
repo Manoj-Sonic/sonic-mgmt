@@ -3,7 +3,7 @@
   * [Testbed](#testbed)
 - [Setup configuration](#setup-configuration)
    + [Setup of DUT switch](#setup-of-dut-switch)
-- [IPv4 ZTP via http/ftp/https](#IPv4-ZTP-via-http-ftp-https)
+- [IPv4 ZTP via http/ftp/https](#IPv4-ZTP-via-http/ftp/https)
    - [Test cases](#test-cases)
  - [IPv6 ZTP via http ftp https](#IPv6-ZTP-via-http-ftp-https)
    * [Test cases](#test-cases)
