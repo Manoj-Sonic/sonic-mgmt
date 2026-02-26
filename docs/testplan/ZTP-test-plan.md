@@ -52,7 +52,7 @@ Verify that SONiC Zero Touch Provisioning (ZTP) successfully executes a single c
 
 JSON Sample:
 
-Here **<ztp-server>** can either http or ftp or https
+Here **ztp-server** can either http or ftp or https
 
 ```
 {
