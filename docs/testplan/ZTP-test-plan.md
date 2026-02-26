@@ -3,18 +3,11 @@
   * [Testbed](#testbed)
 - [Setup configuration](#setup-configuration)
    + [Setup of DUT switch](#setup-of-dut-switch)
-- [IPv4 ZTP via http](#IPv4-ZTP-via-http)
+- [IPv4 ZTP via http/ftp/https](#IPv4-ZTP-via-http-ftp-https)
    - [Test cases](#test-cases)
-- [IPv4 ZTP via ftp](#IPv4-ZTP-via-ftp)
+ - [IPv6 ZTP via http ftp https](#IPv6-ZTP-via-http-ftp-https)
    * [Test cases](#test-cases)
- - [IPv4 ZTP via https](#IPv4-ZTP-via-https)
-   * [Test cases](#test-cases)
- - [IPv6 ZTP via http](#IPv6-ZTP-via-http)
-   * [Test cases](#test-cases)
- - [IPv6 ZTP via ftp](#IPv6-ZTP-vai-ftp)
-   * [Test cases](#test-cases)
- - [IPv6 ZTP via https](#IPv6-ZTP-via-https)
-   * [Test cases](#test-cases)
+ 
      
 ## Overview
 This is a test plan to validate the Zero Touch Provisioning (ZTP) feature on SONiC. The test covers automated provisioning via management interface, including firmware installation and configuration loading.
@@ -40,7 +33,7 @@ sudo config ztp enable
 sudo config ztp run -y
 show config ztp
 
-# IPv4 ZTP via http 
+# IPv4 ZTP via http/ftp/https
 
 ## Test Cases
 
