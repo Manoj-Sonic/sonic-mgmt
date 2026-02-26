@@ -56,6 +56,7 @@ JSON Sample:
       "destination": "/etc/sonic/config_db.json"
      }
     }
+  }
  }
 ```
 - Host the config_db.json file at the specified URL on the ZTP web server.
@@ -66,4 +67,5 @@ JSON Sample:
 - The switch executes the single configuration section and fetches config_db.json from the ZTP server.
 - The switch applies the configuration from config_db.json.
 - Verification: The running configuration on the switch matches the contents of the provisioned config_db.json.
+
 
