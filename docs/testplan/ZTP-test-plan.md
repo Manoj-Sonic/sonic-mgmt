@@ -4,7 +4,7 @@
 - [Setup configuration](#setup-configuration)
    + [Setup of DUT switch](#setup-of-dut-switch)
 - [Test cases](#test-cases)
-   * [IPv4 ZTP via http](#IPv4-ZTP-via-http)
+   - [IPv4 ZTP via http](#IPv4-ZTP-via-http)
       * [Test case \#1 - POP Label](#test-case-1---pop-label)
          + [Test objective](#test-objective)
          + [Test steps](#test-steps)
