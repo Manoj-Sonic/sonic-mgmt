@@ -3,11 +3,10 @@
   * [Testbed](#testbed)
 - [Setup configuration](#setup-configuration)
    + [Setup of DUT switch](#setup-of-dut-switch)
-- [Test cases](#test-cases)
-   - [IPv4 ZTP via http](#IPv4-ZTP-via-http)
-      * [Test case \#1 - ZTP Single Configuration Section (config_db.json)](#test-case-1---ZTP-Single-Configuration)
-         + [Test objective](#test-objective)
-         + [Test steps](#test-steps)
+
+- [IPv4 ZTP via http](#IPv4-ZTP-via-http)
+   * [Test cases](#test-cases)
+   * [IPv4 ZTP via http](#IPv4-ZTP-via-http)
    * [IPv4 ZTP via ftp](#IPv4-ZTP-via-ftp)
    * [IPv4 ZTP via https](#IPv4-ZTP-via-https)
    * [IPv6 ZTP via http](#IPv6-ZTP-via-http)
@@ -36,9 +35,9 @@ sudo config ztp enable
 sudo config ztp run -y
 show config ztp
 
-# Test cases
+# IPv4 ZTP via http 
 
-## IPv4 ZTP via http 
+## Test Cases
 
 Depends on the test case use case the ztp configs will be pushed to DUT via DHCP Packets
 
