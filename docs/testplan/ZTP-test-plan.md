@@ -29,9 +29,9 @@ During testrun, Ansible will copy ZTP commands to DUT.
 
 ZTP CLI COMMAND
 
-sudo config ztp enable
-sudo config ztp run -y
-show config ztp
+'sudo config ztp enable'
+'sudo config ztp run -y'
+'show config ztp'
 
 # IPv4 ZTP via HTTP, FTP, and HTTPS
 
