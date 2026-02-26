@@ -6,12 +6,19 @@
 
 - [IPv4 ZTP via http](#IPv4-ZTP-via-http)
    * [Test cases](#test-cases)
-   * [IPv4 ZTP via http](#IPv4-ZTP-via-http)
-   * [IPv4 ZTP via ftp](#IPv4-ZTP-via-ftp)
-   * [IPv4 ZTP via https](#IPv4-ZTP-via-https)
-   * [IPv6 ZTP via http](#IPv6-ZTP-via-http)
-   * [IPv6 ZTP via ftp](#IPv6-ZTP-vai-ftp)
-   * [IPv6 ZTP via https](#IPv6-ZTP-via-https)
+- [IPv4 ZTP via http](#IPv4-ZTP-via-http)
+   * [Test cases](#test-cases)
+- [IPv4 ZTP via ftp](#IPv4-ZTP-via-ftp)
+   * [Test cases](#test-cases)
+ - [IPv4 ZTP via https](#IPv4-ZTP-via-https)
+   * [Test cases](#test-cases)
+ - [IPv6 ZTP via http](#IPv6-ZTP-via-http)
+   * [Test cases](#test-cases)
+ - [IPv6 ZTP via ftp](#IPv6-ZTP-vai-ftp)
+   * [Test cases](#test-cases)
+ - [IPv6 ZTP via https](#IPv6-ZTP-via-https)
+   * [Test cases](#test-cases)
+     
 ## Overview
 This is Test Plan to test ZTP feature on SONiC. The test enables MPLS on interfaces, configures static LSPs and assumes all basic configurations including BGP routes are already preconfigured.
 
@@ -107,7 +114,9 @@ JSON Sample:
 - Wait for ZTP to complete provisioning.
 
 
-## IPv4 ZTP via ftp
+# IPv4 ZTP via ftp
+
+## Test Cases
 
 Depends on the test case use case the ztp configs will be pushed to DUT via DHCP Packets
 
