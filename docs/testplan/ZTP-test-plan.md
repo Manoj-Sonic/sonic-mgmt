@@ -4,7 +4,7 @@
 - [Setup configuration](#setup-configuration)
    + [Setup of DUT switch](#setup-of-dut-switch)
 - [Test cases](#test-cases)
-   * [http test cases](#scope)
+   * [http test cases](#http-test-cases)
 ## Overview
 This is Test Plan to test ZTP feature on SONiC. The test enables MPLS on interfaces, configures static LSPs and assumes all basic configurations including BGP routes are already preconfigured.
 
