@@ -3,10 +3,10 @@
   * [Testbed](#testbed)
 - [Setup configuration](#setup-configuration)
    + [Setup of DUT switch](#setup-of-dut-switch)
-- [IPv4 ZTP via http ftp https](#IPv4-ZTP-via-http-ftp-https)
-   - [Test cases](#test-cases)
- - [IPv6 ZTP via http ftp https](#IPv6-ZTP-via-http-ftp-https)
-   * [Test cases](#test-cases)
+- [IPv4 ZTP via HTTP, FTP, and HTTPS](#ipv4-ztp-via-http-ftp-and-https)
+  - [Test Cases](#test-cases)
+- [IPv6 ZTP via HTTP, FTP, and HTTPS](#ipv6-ztp-via-http-ftp-and-https)
+  - [Test Cases](#test-cases)
  
      
 ## Overview
@@ -33,7 +33,7 @@ sudo config ztp enable
 sudo config ztp run -y
 show config ztp
 
-# IPv4 ZTP via http ftp https
+# IPv4 ZTP via HTTP, FTP, and HTTPS
 
 ## Test Cases
 
@@ -52,7 +52,7 @@ Verify that SONiC Zero Touch Provisioning (ZTP) successfully executes a single c
 
 JSON Sample:
 
-Here **ztp-server** can either http or ftp or https
+Repeat the test case with the **ztp-server** URL in the JSON file using each of the following protocols: HTTP, FTP, and HTTPS.
 
 ```
 {
@@ -83,7 +83,7 @@ Verify that ZTP can execute a user-defined plugin in the configuration section u
 
 JSON Sample:
 
-Here **ztp-server** can either http or ftp or https
+Repeat the test case with the **ztp-server** URL in the JSON file using each of the following protocols: HTTP, FTP, and HTTPS.
 
 ```
 {
@@ -108,7 +108,7 @@ Here **ztp-server** can either http or ftp or https
 - Enable and run the ZTP on the SONiC device.
 - Wait for ZTP to complete provisioning.
 
-# IPv6 ZTP via http ftp https
+# IPv6 ZTP via HTTP, FTP, and HTTPS
 
 ## Test Cases
 
@@ -127,7 +127,7 @@ Verify that SONiC Zero Touch Provisioning (ZTP) successfully executes a single c
 
 JSON Sample:
 
-Here **ztp-server** can either http or ftp or https
+Repeat the test case with the **ztp-server** URL in the JSON file using each of the following protocols: HTTP, FTP, and HTTPS.
 
 ```
 {
@@ -158,7 +158,7 @@ Verify that ZTP can execute a user-defined plugin in the configuration section u
 
 JSON Sample:
 
-Here **ztp-server** can either http or ftp or https
+Repeat the test case with the **ztp-server** URL in the JSON file using each of the following protocols: HTTP, FTP, and HTTPS.
 
 ```
 {
