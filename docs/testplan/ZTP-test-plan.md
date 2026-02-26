@@ -29,7 +29,7 @@ During testrun, Ansible will copy ZTP commands to DUT.
 
 ZTP CLI COMMAND
 
-```markdown
+
 - 'sudo config ztp enable'
 - 'sudo config ztp run -y'
 - 'show config ztp'
