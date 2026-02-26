@@ -5,7 +5,7 @@
    + [Setup of DUT switch](#setup-of-dut-switch)
 
 - [IPv4 ZTP via http](#IPv4-ZTP-via-http)
-   * [Test cases](#test-cases)
+   - [Test cases](#test-cases)
 - [IPv4 ZTP via ftp](#IPv4-ZTP-via-ftp)
    * [Test cases](#test-cases)
  - [IPv4 ZTP via https](#IPv4-ZTP-via-https)
