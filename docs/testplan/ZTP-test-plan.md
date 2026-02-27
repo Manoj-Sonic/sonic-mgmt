@@ -53,14 +53,14 @@ Verify that SONiC Zero Touch Provisioning (ZTP) successfully executes a single c
 
 JSON Sample:
 
-Repeat the test case with the **ztp-server** URL in the JSON file using each of the following protocols: HTTP, FTP, and HTTPS.
+Repeat the test case with the **ztp-protocol** URL in the JSON file using each of the following protocols: HTTP, FTP, and HTTPS.
 
 ```
 {
   "ztp": {
     "01-configdb-json": {
     "url": {
-      "source": "<ztp-server>://<ipv4-ztp-server>/sonic_config_db.json",
+      "source": "<ztp-protocol>://<ipv4-ztp-server>/sonic_config_db.json",
       "destination": "/etc/sonic/config_db.json"
      }
     }
