@@ -70,46 +70,8 @@ Repeat the test case with the **ztp-server** URL in the JSON file using each of 
 - Host the config_db.json file at the specified URL on the ZTP web server.
 - Enable ZTP on the SONiC device.
 - Wait for ZTP to complete provisioning.
-  
-### Test case \#2 - ZTP with User-Defined Plugin Using URL Object.
 
-#### Test objective
-Verify that ZTP can execute a user-defined plugin in the configuration section using a URL object, and that ZTP reports success if the configuration task completes successfully.
-
-#### Test steps
-- Sonic DUT should be up and running.
-- Prepare a user-defined plugin and ensure it is available on the SONiC device or accessible via the ZTP process.
-- Host a configuration file (e.g., a script or JSON)  on the server should be accessible to the DUT.
-- Create a ZTP JSON file with a configuration section that uses the user-defined plugin and references the configuration file via a URL object. Example:
-
-JSON Sample:
-
-Repeat the test case with the **ztp-server** URL in the JSON file using each of the following protocols: HTTP, FTP, and HTTPS.
-
-```
-{
-  "ztp": {
-    "01-configdb-json": {
-    "url": {
-      "source": "<ztp-server>://<ipv4-ztp-server>/sonic_config_db.json",
-      "destination": "/etc/sonic/config_db.json"
-     }
-    },
-   "03-provisioning-script": {
-      "plugin": {
-        "url":"<ztp-server>://<ipv4-ztp-server>/post_install.sh"
-      },
-      "reboot-on-success": true
-    }
-  }
- }
-```
-- Set Option 67 (bootfile name) to the URL of the ZTP JSON file (e.g., http://<ipv4-ztp-server>/ztp_config.json)
-- Ensure the switch front panel port is connected and can reach the DHCP server.
-- Enable and run the ZTP on the SONiC device.
-- Wait for ZTP to complete provisioning.
-
-### Test case \#3 - ZTP Firmware Image Install and Reboot.
+### Test case \#2 - ZTP Firmware Image Install and Reboot.
 
 #### Test objective
 Verify that the switch downloads and installs the specified SONiC firmware image via ZTP, then reboots to the new image.
@@ -122,26 +84,71 @@ Verify that the switch downloads and installs the specified SONiC firmware image
 
 JSON Sample:
 
-Repeat the test case with the **ztp-server** URL in the JSON file using each of the following protocols: HTTP, FTP, and HTTPS.
+Repeat the test case with the **ztp-protocol** URL in the JSON file using each of the following protocols: HTTP, FTP, and HTTPS.
 
 ```
 {
   "ztp": {
      "01-configdb-json": {
       "url": {
-        "source": "http://192.168.1.1/sonic_config_db.json",
+        "source": "<ztp-protocol>://192.168.1.1/sonic_config_db.json",
         "destination": "/etc/sonic/config_db.json"
       }
     },
     "02-firmware": {
       "install": {
-        "url": "http://192.168.1.1/sonic-broadcom-2025.05-R1.bin",
+        "url": "<ztp-protocol>://192.168.1.1/sonic-broadcom-2025.05-R1.bin",
         "set-default": true
       },
       "reboot-on-success": true
     }
   }
 }
+```
+- Set Option 67 (bootfile name) to the URL of the ZTP JSON file (e.g., http://<ipv4-ztp-server>/ztp_config.json)
+- Ensure the switch front panel port is connected and can reach the DHCP server.
+- Enable and run the ZTP on the SONiC device.
+- Wait for ZTP to complete provisioning.
+  
+### Test case \#3 - ZTP with User-Defined Plugin Using URL Object.
+
+#### Test objective
+Verify that ZTP can execute a user-defined plugin in the configuration section using a URL object, and that ZTP reports success if the configuration task completes successfully.
+
+#### Test steps
+- Sonic DUT should be up and running.
+- Prepare a user-defined plugin and ensure it is available on the SONiC device or accessible via the ZTP process.
+- Host a configuration file (e.g., a script or JSON)  on the server should be accessible to the DUT.
+- Create a ZTP JSON file with a configuration section that uses the user-defined plugin and references the configuration file via a URL object. Example:
+
+JSON Sample:
+
+Repeat the test case with the **ztp-protocol** URL in the JSON file using each of the following protocols: HTTP, FTP, and HTTPS.
+
+```
+{
+  "ztp": {
+    "01-configdb-json": {
+    "url": {
+      "source": "<ztp-protocol>://<ipv4-ztp-server>/sonic_config_db.json",
+      "destination": "/etc/sonic/config_db.json"
+     }
+    },
+   "02-firmware": {
+      "install": {
+        "url": "<ztp-protocol>://192.168.1.1/sonic-broadcom-2025.05-R1.bin",
+        "set-default": true
+      },
+      "reboot-on-success": true
+    },
+   "03-provisioning-script": {
+      "plugin": {
+        "url":"<ztp-protocol>://<ipv4-ztp-server>/post_install.sh"
+      },
+      "reboot-on-success": true
+    }
+  }
+ }
 ```
 - Set Option 67 (bootfile name) to the URL of the ZTP JSON file (e.g., http://<ipv4-ztp-server>/ztp_config.json)
 - Ensure the switch front panel port is connected and can reach the DHCP server.
@@ -184,42 +191,88 @@ Repeat the test case with the **ztp-protocol** URL in the JSON file using each o
 - Host the config_db.json file at the specified URL on the ZTP web server, accessible via IPv6.
 - Enable ZTP on the SONiC device.
 - Wait for ZTP to complete provisioning.
-  
-### Test case \#2 - ZTP with User-Defined Plugin Using URL Object.
+
+### Test case \#2 - ZTP Firmware Image Install and Reboot (IPv6).
 
 #### Test objective
-Verify that ZTP can execute a user-defined plugin in the configuration section using a URL object, and that ZTP reports success if the configuration task completes successfully.
+Verify that the switch downloads and installs the specified SONiC firmware image via ZTP over IPv6, then reboots to the new image.
+
+#### Test steps
+- Sonic DUT should be up and running.
+- Ensure the switch out-of-band interface (eth0) has IPv6 connectivity to the DHCPv6 server.
+- Configure the DHCPv6 server to provide Option 59 (or equivalent) pointing to the ZTP JSON file hosted on the ZTP web server, accessible via IPv6.
+- Create a ZTP JSON file with configuration sections for both the config DB and firmware installation, referencing the files via URL objects.
+
+JSON Sample:
+
+Repeat the test case with the **ztp-protocol** URL in the JSON file using each of the following protocols: HTTP, FTP, and HTTPS.
+
+```
+{
+  "ztp": {
+     "01-configdb-json": {
+      "url": {
+        "source": "<ztp-protocol>://192.168.1.1/sonic_config_db.json",
+        "destination": "/etc/sonic/config_db.json"
+      }
+    },
+    "02-firmware": {
+      "install": {
+        "url": "<ztp-protocol>://192.168.1.1/sonic-broadcom-2025.05-R1.bin",
+        "set-default": true
+      },
+      "reboot-on-success": true
+    }
+  }
+}
+```
+- Ensure the switch front panel port is connected and can reach the DHCP server via IPv6.
+- Enable ZTP on the SONiC device.
+- Wait for ZTP to complete provisioning.
+
+### Test case \#3 - ZTP with User-Defined Plugin Using URL Object (IPv6).
+
+#### Test objective
+Verify that ZTP can execute a user-defined plugin in the configuration section using a URL object over IPv6, and that ZTP reports success if the configuration task completes successfully.
 
 #### Test steps
 - Sonic DUT should be up and running.
 - Prepare a user-defined plugin and ensure it is available on the SONiC device or accessible via the ZTP process.
-- Host a configuration file (e.g., a script or JSON) on an HTTP server accessible to the DUT.
-- Create a ZTP JSON file with a configuration section that uses the user-defined plugin and references the configuration file via a URL object. Example:
+- Host configuration files (e.g., sonic_config_db.json, firmware .bin file, script) on a server accessible to the DUT via IPv6.
+- Create a ZTP JSON file with configuration sections for config DB, firmware installation, and provisioning script, referencing the files via URL objects.
 
 JSON Sample:
 
-Repeat the test case with the **ztp-server** URL in the JSON file using each of the following protocols: HTTP, FTP, and HTTPS.
+Repeat the test case with the **ztp-protocol** URL in the JSON file using each of the following protocols: HTTP, FTP, and HTTPS.
 
 ```
 {
   "ztp": {
     "01-configdb-json": {
     "url": {
-      "source": "<ztp-server>://<ipv6-ztp-server>/sonic_config_db.json",
+      "source": "<ztp-protocol>://<ipv4-ztp-server>/sonic_config_db.json",
       "destination": "/etc/sonic/config_db.json"
      }
     },
+   "02-firmware": {
+      "install": {
+        "url": "<ztp-protocol>://192.168.1.1/sonic-broadcom-2025.05-R1.bin",
+        "set-default": true
+      },
+      "reboot-on-success": true
+    },
    "03-provisioning-script": {
       "plugin": {
-        "url":"<ztp-server>://<ipv6-ztp-server>/post_install.sh"
+        "url":"<ztp-protocol>://<ipv4-ztp-server>/post_install.sh"
       },
       "reboot-on-success": true
     }
   }
  }
 ```
-- Set Option 67 (bootfile name) to the URL of the ZTP JSON file (e.g., http://<ipv6-ztp-server>/ztp_config.json)
-- Ensure the switch front panel port is connected and can reach the DHCP server.
+- Set DHCPv6 Option 59 (Bootfile URL) to the URL of the ZTP JSON file (e.g., http://[<ipv6-ztp-server>]/ztp_config.json).
+- Ensure the switch front panel port is connected and can reach the DHCPv6 server via IPv6.
 - Enable and run the ZTP on the SONiC device.
 - Wait for ZTP to complete provisioning.
+
 
