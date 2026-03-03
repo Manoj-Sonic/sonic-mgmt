@@ -355,21 +355,26 @@ Repeat the test case with the **ztp-protocol** URL in the JSON file using each o
 - All ZTP-related temporary files in /var/tmp are deleted after ZTP completes.
 - /var/tmp should not contain any leftover files created by ZTP.
 
-### Test case \#8 -  ZTP Temporary File Cleanup in /var/tmp.
+### Test case \#8 -  Aborting ZTP/Auto-Image-Upgrade on SONiC.
 
 #### Test objective
-Ensure that all temporary files created by ZTP in /var/tmp are removed after ZTP completes.
+Verify that ZTP/auto-image-upgrade can be aborted by supported SONiC mechanisms (e.g., removing ZTP trigger files, disabling ZTP service, or rebooting after ZTP completes).
 
 #### Test steps
 - Reboot the SONiC device to trigger ZTP (use a cold boot or factory reset if needed).
-- Allow ZTP to complete its process (image/config download, provisioning, etc.).
+- While ZTP is running, abort it using one of the supported methods.
+     * Remove the ZTP trigger file (if present):
+     * sudo rm -f /host/ztp/ztp_trigger
+     * Stop the ZTP service (if running as a service):
+     * sudo systemctl stop ztp.service
+- Reboot the device to clear ZTP state.
 - For FTP/HTTP: Make the image URL temporarily unreachable (e.g., stop the HTTP/FTP server or block the port).
 - After ZTP completes, log in to the SONiC device.
 - List files in /var/tmp:
 
 JSON Sample:
 
-Repeat the test case with the **ztp-protocol** URL in the JSON file using each of the following protocols: HTTP, FTP, and HTTPS.
+Repeat the test case with the **ztp-protocol** URL in the JSON file with the following protocol: HTTP
 
 ```
 {
@@ -390,10 +395,68 @@ Repeat the test case with the **ztp-protocol** URL in the JSON file using each o
   }
 }
 ```
-- Set Option 67 (bootfile name) to the URL of the ZTP JSON file (e.g., http://<ipv4-ztp-server>/ztp_config.json)
-- All ZTP-related temporary files in /var/tmp are deleted after ZTP completes.
-- /var/tmp should not contain any leftover files created by ZTP.
+- Confirm that ZTP stops running and no further ZTP actions are performed.
+- Check logs (/var/log/ztp.log or /var/log/syslog) for messages indicating ZTP was aborted or stopped.
 
+### Test case \#10 -  Verify ZTP with Symbolic Link Option for Image and Config.
+
+#### Test objective
+Ensure that SONiC ZTP can handle image and config file paths specified as symbolic links via DHCP option.
+
+#### Test steps
+- Reboot the SONiC device to trigger ZTP (use a cold boot or factory reset if needed).
+- Configure DHCP to specify the image file type as symlink using the vendor-specific option.
+- Point the bootfile-name to your ZTP JSON file.
+- In your ZTP JSON, specify the image and config file URLs as symbolic links (the server should serve symlinks).
+- Ensure SONiC correctly follows the symlink to fetch the image and config file.
+
+DHCP SERVER CONFIG
+```
+default-lease-time 600;
+max-lease-time 7200;
+ddns-update-style none;
+log-facility local7;
+authoritative;
+
+# Vendor-specific options for symlink
+option space NEW_OP;
+option NEW_OP.image-file-type code 2 = text;
+option NEW_OP-encapsulation code 43 = encapsulate NEW_OP;
+
+subnet 192.168.1.0 netmask 255.255.255.0 {
+    range 192.168.1.2 192.168.1.100;
+    option routers 192.168.1.1;
+    option subnet-mask 255.255.255.0;
+    option domain-name-servers 8.8.8.8;
+    option bootfile-name "http://192.168.1.1/sonic-ztp-config.json";
+    option NEW_OP.image-file-type "symlink";
+}
+```
+JSON Sample:
+
+Repeat the test case with the **ztp-protocol** URL in the JSON file with the following protocol: HTTP
+
+```
+{
+  "ztp": {
+    "01-configdb-json": {
+      "url": {
+        "source": "<ztp-protocol>://<ipv4-ztp-server>/sonic_config_db_symlink.json",
+        "destination": "/etc/sonic/config_db_symlink.json"
+      }
+    },
+    "02-firmware": {
+       "install": {
+         "url": "<ztp-protocol>://<ipv4-ztp-server>/sonic_config_db.json",
+         "set-default": true
+       },
+       "reboot-on-success": true
+     }
+  }
+}
+```
+- SONiC successfully downloads and uses the image and config file via symbolic links.
+- ZTP completes without errors.
 
 # IPv6 ZTP via HTTP, FTP, and HTTPS
 
