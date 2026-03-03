@@ -355,6 +355,45 @@ Repeat the test case with the **ztp-protocol** URL in the JSON file using each o
 - All ZTP-related temporary files in /var/tmp are deleted after ZTP completes.
 - /var/tmp should not contain any leftover files created by ZTP.
 
+### Test case \#8 -  ZTP Temporary File Cleanup in /var/tmp.
+
+#### Test objective
+Ensure that all temporary files created by ZTP in /var/tmp are removed after ZTP completes.
+
+#### Test steps
+- Reboot the SONiC device to trigger ZTP (use a cold boot or factory reset if needed).
+- Allow ZTP to complete its process (image/config download, provisioning, etc.).
+- For FTP/HTTP: Make the image URL temporarily unreachable (e.g., stop the HTTP/FTP server or block the port).
+- After ZTP completes, log in to the SONiC device.
+- List files in /var/tmp:
+
+JSON Sample:
+
+Repeat the test case with the **ztp-protocol** URL in the JSON file using each of the following protocols: HTTP, FTP, and HTTPS.
+
+```
+{
+  "ztp": {
+    "01-configdb-json": {
+      "url": {
+        "source": "<ztp-protocol>://<ipv4-ztp-server>/sonic_config_db.json",
+        "destination": "/etc/sonic/config_db.json"
+      }
+    },
+    "02-firmware": {
+       "install": {
+         "url": "<ztp-protocol>://<ipv4-ztp-server>/sonic_config_db.json",
+         "set-default": true
+       },
+       "reboot-on-success": true
+     }
+  }
+}
+```
+- Set Option 67 (bootfile name) to the URL of the ZTP JSON file (e.g., http://<ipv4-ztp-server>/ztp_config.json)
+- All ZTP-related temporary files in /var/tmp are deleted after ZTP completes.
+- /var/tmp should not contain any leftover files created by ZTP.
+
 
 # IPv6 ZTP via HTTP, FTP, and HTTPS
 
