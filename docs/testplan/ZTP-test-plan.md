@@ -231,6 +231,130 @@ Repeat the test case with the **ztp-protocol** URL in the JSON file using each o
 - Replace <hostname> with the actual hostname of the DUT (the file is intentionally missing or misnamed on the server for this negative test).
 - Boot the SONiC switch and monitor ZTP logs.
 
+### Test case \#6 -  SONiC ZTP/AIU Image & Config Upgrade via DHCP Vendor Options.
+
+#### Test objective
+Verify that SONiC ZTP and AIU can upgrade the device image or configuration based on release and platform info received from DHCP vendor options.
+
+#### Test steps
+- Power off and then power on (cold boot) or reboot the SONiC device to trigger ZTP.
+- Configure your DHCP server to send:
+    * The desired SONiC release version.
+    * The platform model.
+    * A config file URL.
+ - The SONiC device boots and sends a DHCP request on the management interface.
+ - The device receives DHCP options and downloads the ZTP JSON config file from the provided URL.
+ - SONiC compares the release and platform info from DHCP with its current image.
+ - if the release is different, SONiC downloads and installs the new image, then reboots.
+ - If a config file URL is provided, SONiC skips the image upgrade and applies the new configuration.
+
+JSON Sample:
+
+Repeat the test case with the **ztp-protocol** URL in the JSON file using each of the following protocols: HTTP, FTP, and HTTPS.
+
+```
+{
+  "release": "2025.05-R1",
+  "platform": "x86_64-acme-abc123",
+  "ztp": {
+    "01-configdb-json": {
+      "url": {
+        "source": "<ztp-protocol>://<ipv4-ztp-server>/sonic_config_db.json",
+        "destination": "/etc/sonic/config_db.json"
+      }
+    },
+    "02-firmware": {
+       "install": {
+         "url": "<ztp-protocol>://<ipv4-ztp-server>/sonic_config_db.json",
+         "set-default": true
+       },
+       "reboot-on-success": true
+     }
+  }
+}
+```
+- Set Option 67 (bootfile name) to the URL of the ZTP JSON file (e.g., http://<ipv4-ztp-server>/ztp_config.json)
+- Boot the SONiC switch and monitor ZTP logs.
+
+### Test case \#7 -  SONiC Auto-Image Upgrade Retry on Image Download Failure.
+
+#### Test objective
+Verify that SONiC ZTP retries image download up to 6 times (with 10s intervals) on FTP/HTTP transfer failure, and restarts the ZTP state machine after repeated failures. For TFTP, verify the 2-hour timeout.
+
+#### Test steps
+- Reboot the SONiC device to trigger ZTP (no zeroize command in SONiC; use a cold boot or factory reset if needed).
+- Set up ZTP to use an image URL via FTP, HTTP, or TFTP in the ZTP JSON file.
+- For FTP/HTTP: Make the image URL temporarily unreachable (e.g., stop the HTTP/FTP server or block the port).
+- For TFTP: Ensure the TFTP server is unreachable or the file is missing..
+- For FTP/HTTP: Confirm that SONiC retries the download 6 times, waiting 10 seconds between each attempt.
+- For TFTP: Confirm that SONiC waits up to 2 hours before declaring failure.
+- After all retries/timeouts, verify that the ZTP state machine restarts (ZTP process resets and waits for new instructions).
+
+JSON Sample:
+
+Repeat the test case with the **ztp-protocol** URL in the JSON file using each of the following protocols: HTTP, FTP, and HTTPS.
+
+```
+{
+  "ztp": {
+    "01-configdb-json": {
+      "url": {
+        "source": "<ztp-protocol>://<ipv4-ztp-server>/sonic_config_db.json",
+        "destination": "/etc/sonic/config_db.json"
+      }
+    },
+    "02-firmware": {
+       "install": {
+         "url": "<ztp-protocol>://<ipv4-ztp-server>/sonic_config_db.json",
+         "set-default": true
+       },
+       "reboot-on-success": true
+     }
+  }
+}
+```
+- Set Option 67 (bootfile name) to the URL of the ZTP JSON file (e.g., http://<ipv4-ztp-server>/ztp_config.json)
+- After all retries/timeouts, the ZTP state machine restarts and is ready for the next ZTP attempt.
+
+### Test case \#8 -  ZTP Temporary File Cleanup in /var/tmp.
+
+#### Test objective
+Ensure that all temporary files created by ZTP in /var/tmp are removed after ZTP completes.
+
+#### Test steps
+- Reboot the SONiC device to trigger ZTP (use a cold boot or factory reset if needed).
+- Allow ZTP to complete its process (image/config download, provisioning, etc.).
+- For FTP/HTTP: Make the image URL temporarily unreachable (e.g., stop the HTTP/FTP server or block the port).
+- After ZTP completes, log in to the SONiC device.
+- List files in /var/tmp:
+
+JSON Sample:
+
+Repeat the test case with the **ztp-protocol** URL in the JSON file using each of the following protocols: HTTP, FTP, and HTTPS.
+
+```
+{
+  "ztp": {
+    "01-configdb-json": {
+      "url": {
+        "source": "<ztp-protocol>://<ipv4-ztp-server>/sonic_config_db.json",
+        "destination": "/etc/sonic/config_db.json"
+      }
+    },
+    "02-firmware": {
+       "install": {
+         "url": "<ztp-protocol>://<ipv4-ztp-server>/sonic_config_db.json",
+         "set-default": true
+       },
+       "reboot-on-success": true
+     }
+  }
+}
+```
+- Set Option 67 (bootfile name) to the URL of the ZTP JSON file (e.g., http://<ipv4-ztp-server>/ztp_config.json)
+- All ZTP-related temporary files in /var/tmp are deleted after ZTP completes.
+- /var/tmp should not contain any leftover files created by ZTP.
+
 
 # IPv6 ZTP via HTTP, FTP, and HTTPS
 
