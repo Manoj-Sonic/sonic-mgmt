@@ -458,6 +458,50 @@ Repeat the test case with the **ztp-protocol** URL in the JSON file with the fol
 - SONiC successfully downloads and uses the image and config file via symbolic links.
 - ZTP completes without errors.
 
+### Test case \#11 -  ZTP Behavior on Link Down During Provisioning.
+
+#### Test objective
+Verify SONiC ZTP/AIU behavior when the management link goes down after DHCP binding and during/after file transfer.
+
+#### Test steps
+- Reboot the SONiC device to trigger ZTP (use a cold boot or factory reset if needed).
+- Allow the SONiC DUT to obtain a DHCP lease and start ZTP provisioning.
+- After DHCP binding is complete and the active link is up, physically or logically disable the management (eth0) link.
+- Observe Behavior
+    * If the link goes down before image/config files are fully downloaded
+        * For HTTP/FTP: SONiC should retry the file transfer up to 6 times, with a 15-second timeout between retries.
+        * If all retries fail, ZTP should abort or move to the next client (if applicable).
+    * If all retries fail, ZTP should abort or move to the next client (if applicable).
+        * ZTP should proceed with image installation and config commit, regardless of link state. 
+
+
+JSON Sample:
+
+Repeat the test case with the **ztp-protocol** URL in the JSON file with the following protocol: HTTP
+
+```
+{
+  "ztp": {
+    "01-configdb-json": {
+      "url": {
+        "source": "<ztp-protocol>://<ipv4-ztp-server>/sonic_config_db_symlink.json",
+        "destination": "/etc/sonic/config_db_symlink.json"
+      }
+    },
+    "02-firmware": {
+       "install": {
+         "url": "<ztp-protocol>://<ipv4-ztp-server>/sonic_config_db.json",
+         "set-default": true
+       },
+       "reboot-on-success": true
+     }
+  }
+}
+```
+- If the link is down after DHCP binding, the DUT cannot process FTP/HTTP requests to the server.
+- If the link goes down during file transfer, SONiC retries the transfer 6 times with 15s intervals before failing the operation.
+- If the link goes down after all files are fetched, ZTP continues with installation and configuration without interruption.
+
 # IPv6 ZTP via HTTP, FTP, and HTTPS
 
 ## Test Cases
