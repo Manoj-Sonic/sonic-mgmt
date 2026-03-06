@@ -97,7 +97,7 @@ Repeat the test case with the **ztp-protocol** URL in the JSON file using each o
     },
     "02-firmware": {
       "install": {
-        "url": "<ztp-protocol>://192.168.1.1/sonic-broadcom-2025.05-R1.bin",
+        "url": "<ztp-protocol>://192.168.1.1/sonic-firmware.bin",
         "set-default": true
       },
       "reboot-on-success": true
@@ -136,7 +136,7 @@ Repeat the test case with the **ztp-protocol** URL in the JSON file using each o
     },
    "02-firmware": {
       "install": {
-        "url": "<ztp-protocol>://192.168.1.1/sonic-broadcom-2025.05-R1.bin",
+        "url": "<ztp-protocol>://192.168.1.1/sonic-firmware.bin",
         "set-default": true
       },
       "reboot-on-success": true
@@ -181,7 +181,7 @@ Repeat the test case with the **ztp-protocol** URL in the JSON file using each o
     },
    "02-firmware": {
       "install": {
-        "url": "<ztp-protocol>://192.168.1.1/sonic-broadcom-2025.05-R1.bin",
+        "url": "<ztp-protocol>://192.168.1.1/sonic-firmware.bin",
         "set-default": true
       },
       "reboot-on-success": true
@@ -265,7 +265,7 @@ Repeat the test case with the **ztp-protocol** URL in the JSON file using each o
     },
     "02-firmware": {
        "install": {
-         "url": "<ztp-protocol>://<ipv4-ztp-server>/sonic_config_db.json",
+         "url": "<ztp-protocol>://<ipv4-ztp-server>/sonic_firmware.bin",
          "set-default": true
        },
        "reboot-on-success": true
@@ -305,7 +305,7 @@ Repeat the test case with the **ztp-protocol** URL in the JSON file using each o
     },
     "02-firmware": {
        "install": {
-         "url": "<ztp-protocol>://<ipv4-ztp-server>/sonic_config_db.json",
+         "url": "<ztp-protocol>://<ipv4-ztp-server>/sonic_firmware.bin",
          "set-default": true
        },
        "reboot-on-success": true
@@ -343,7 +343,7 @@ Repeat the test case with the **ztp-protocol** URL in the JSON file using each o
     },
     "02-firmware": {
        "install": {
-         "url": "<ztp-protocol>://<ipv4-ztp-server>/sonic_config_db.json",
+         "url": "<ztp-protocol>://<ipv4-ztp-server>/sonic_firmware.bin",
          "set-default": true
        },
        "reboot-on-success": true
@@ -355,7 +355,7 @@ Repeat the test case with the **ztp-protocol** URL in the JSON file using each o
 - All ZTP-related temporary files in /var/tmp are deleted after ZTP completes.
 - /var/tmp should not contain any leftover files created by ZTP.
 
-### Test case \#8 -  Aborting ZTP/Auto-Image-Upgrade on SONiC.
+### Test case \#9 -  Aborting ZTP/Auto-Image-Upgrade on SONiC.
 
 #### Test objective
 Verify that ZTP/auto-image-upgrade can be aborted by supported SONiC mechanisms (e.g., removing ZTP trigger files, disabling ZTP service, or rebooting after ZTP completes).
@@ -381,7 +381,7 @@ Repeat the test case with the **ztp-protocol** URL in the JSON file with the fol
   "ztp": {
     "01-configdb-json": {
       "url": {
-        "source": "<ztp-protocol>://<ipv4-ztp-server>/sonic_config_db.json",
+        "source": "<ztp-protocol>://<ipv4-ztp-server>/sonic_firmware.bin",
         "destination": "/etc/sonic/config_db.json"
       }
     },
@@ -447,7 +447,7 @@ Repeat the test case with the **ztp-protocol** URL in the JSON file with the fol
     },
     "02-firmware": {
        "install": {
-         "url": "<ztp-protocol>://<ipv4-ztp-server>/sonic_config_db.json",
+         "url": "<ztp-protocol>://<ipv4-ztp-server>/sonic_firmware.bin",
          "set-default": true
        },
        "reboot-on-success": true
