@@ -276,7 +276,7 @@ Repeat the test case with the **ztp-protocol** URL in the JSON file using each o
 - Set Option 67 (bootfile name) to the URL of the ZTP JSON file (e.g., http://<ipv4-ztp-server>/ztp_config.json)
 - Boot the SONiC switch and monitor ZTP logs.
 
-### Test case \#7 -  SONiC Auto-Image Upgrade Retry on Image Download Failure.
+### Test case \#7 -  Verify that the SONiC DUT automatically retries downloading the image if the initial image download fails during the auto-image upgrade proces.
 
 #### Test objective
 Verify that SONiC ZTP retries image download up to 6 times (with 10s intervals) on FTP/HTTP transfer failure, and restarts the ZTP state machine after repeated failures. For TFTP, verify the 2-hour timeout.
