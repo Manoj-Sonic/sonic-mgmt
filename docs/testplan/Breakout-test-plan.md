@@ -18,7 +18,18 @@ The purpose of this test is to verify the port breakout (channelization) functio
 ## Testbed
 T1 TOPO
 
-## Setup configuration
-Required DUT, Fanout, ARISTA VM's
+## Setup Configuration
+This section defines the required devices and their roles in the test environment for validating breakout functionality in a T1 topology.
+
+#### Setup of DUT switch
+During testrun, Ansible will copy Breakout commands to DUT.
+
+Breakout CLI COMMAND
+
+
+- 'sudo config interface breakout Ethernet0 1x800G[400G] -f'
+- 'sudo config interface breakout Ethernet0 2x400G[200G] -f'
+- 'sudo config interface breakout Ethernet0 4x200G[100G] -f'
+- 'sudo config interface breakout Ethernet0 8x100G[50G] -f'
 
 
