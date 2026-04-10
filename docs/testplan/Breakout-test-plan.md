@@ -7,7 +7,7 @@
   * [Setup of DUT Switch](#setup-of-dut-switch
   * [Breakout Configuration](#breakout-configuration)
 
- - [Test Cases][#beak-test-cases]
+ - [Test Cases][#test-cases]
    
 
 ## Overview
@@ -60,12 +60,66 @@ Breakout CLI COMMAND
 
 ### Test case #5 - Breakout interface flap with L3 configuration (4x200G)
 1. Apply breakout configuration on DUT using sudo config interface breakout Ethernet0 4x200G[100G] -f
-2. Configure IPv4 addresses on breakout interfaces (Ethernet0:1 to Ethernet0:4) and establish L3 connectivity with peers
+2. Configure IPv4 addresses on breakout interfaces (Ethernet1 and Ethernet4) and establish L3 connectivity with peers
 3. Shutdown and bring up one breakout interface using config interface shutdown/startup
 4. Verify that interface comes back UP and L3 connectivity (ping) is restored successfully
 
-### Test case #6 - Breakout interface flap with L3 configuration (8x100G)
+### Test case # 6 - Breakout interface flap with L3 configuration (8x100G)
 1. Apply breakout configuration on DUT using sudo config interface breakout Ethernet0 8x100G[50G] -f
-2. Configure IPv4 addresses on breakout interfaces (Ethernet0:1 to Ethernet0:8) and establish L3 connectivity with peers
+2. Configure IPv4 addresses on breakout interfaces (Ethernet0, Ethernet2, Ethernet4 and Ethernet6) and establish L3 connectivity with peers
 3. Shutdown and bring up one breakout interface using config interface shutdown/startup
 4. Verify that interface comes back UP and L3 connectivity (ping) is restored successfully
+
+### Test case # 7 - Breakout interface flap with L3 configuration (1x800G)
+1. Apply breakout configuration on DUT using sudo config interface breakout Ethernet0 1x800G[400G] -f
+2. Configure IPv4 address on the interface (Ethernet0) and establish L3 connectivity with peer
+3. Shutdown and bring up the interface using config interface shutdown/startup
+4. Verify that interface comes back UP and L3 connectivity (ping) is restored successfully
+
+### Test case # 8 - MTU change on breakout interface
+1. Apply breakout configuration on DUT using sudo config interface breakout Ethernet0 2x400G[200G] -f
+2. Configure IPv4 addresses on breakout interfaces
+3. Change MTU on one breakout interface using config interface mtu Ethernet0 9100
+4. Verify MTU update using show interface status and validate traffic forwarding with large packet size.
+
+### Test case # 9 - SNMP verification for breakout interfaces
+1. Apply breakout configuration on DUT and configure L3 interfaces
+2. Ensure SNMP service is enabled on DUT
+3. Poll interface details using SNMP (e.g., interface status, speed, counters)
+4. Verify breakout interfaces are correctly reflected in SNMP output
+
+### Test case # 10 - gNMI telemetry verification for breakout interfaces
+1. Apply breakout configuration on DUT and configure L3 interfaces
+2. Enable gNMI telemetry on DUT
+3. Subscribe to interface state paths (e.g., interface status, counters)
+4. Verify breakout interfaces are reported correctly with accurate operational data
+
+### Test case # 11 - Breakout interface traffic forwarding after reboot
+1. Apply breakout configuration and configure L3 interfaces with IP addresses
+2. Verify initial L3 connectivity with peers
+3. Reboot DUT using reboot
+4. Verify breakout configuration, interface state, and L3 connectivity are restored after reboot
+
+### Test case # 12 - Breakout interface traffic forwarding after warm-reboot
+1. Apply breakout configuration and configure L3 interfaces with IP addresses
+2. Verify initial L3 connectivity with peers
+3. Reboot DUT using warm-reboot
+4. Verify breakout configuration, interface state, and L3 connectivity are restored after warm-reboot
+
+### Test case # 13 - Breakout interface traffic forwarding after fast-reboot
+1. Apply breakout configuration and configure L3 interfaces with IP addresses
+2. Verify initial L3 connectivity with peers
+3. Reboot DUT using fast-reboot
+4. Verify breakout configuration, interface state, and L3 connectivity are restored after fast-reboot
+
+### Test case # 14 - Breakout interface traffic forwarding after soft-reboot
+1. Apply breakout configuration and configure L3 interfaces with IP addresses
+2. Verify initial L3 connectivity with peers
+3. Reboot DUT using soft-reboot
+4. Verify breakout configuration, interface state, and L3 connectivity are restored after soft-reboot
+
+### Test case # 15 - Interface counter validation on breakout ports
+1. Apply breakout configuration and configure L3 interfaces
+2. Send traffic between DUT and peers
+3. Check interface counters using show interface counters
+4. Verify packet counters increment correctly on respective breakout interfaces
