@@ -34,10 +34,11 @@ Breakout CLI COMMAND
 - 'sudo config interface breakout Ethernet0 8x100G[50G] -f'
 
 Ping Validation for IPv4 and IPv6 on DUT.
-      For IPv4:
-         ping <IPv4-peer>
-      For IPv6:
-         ping6 <IPv6-peer>
+```md
+### Ping Validation for IPv4 and IPv6 on DUT
+
+- IPv4: `ping <IPv4-peer>`  
+- IPv6: `ping6 <IPv6-peer>`
 
 ### Note:
 i. Verify the optics support for channelization speeds (800G, 400G, 100G) and execute the breakout configuration accordingly.
