@@ -34,7 +34,6 @@ Breakout CLI COMMAND
 - 'sudo config interface breakout Ethernet0 8x100G[50G] -f'
 
 Ping Validation for IPv4 and IPv6 on DUT.
-```md
 ### Ping Validation for IPv4 and IPv6 on DUT
 
 - IPv4: `ping <IPv4-peer>`  
@@ -44,6 +43,7 @@ Ping Validation for IPv4 and IPv6 on DUT.
 i. Verify the optics support for channelization speeds (800G, 400G, 100G) and execute the breakout configuration accordingly.
 ii. Breakout should be done for both Fanout and DUT
 
+```md
 ## Test cases
 ### Test case # 1 - Verify 2x400G, L3 Interface Creation After Breakout on Random Interface (IPv4 and IPv6)
 1. Apply breakout configuration on DUT using sudo config interface breakout <InterfaceName> 2x400G[200G] -f
