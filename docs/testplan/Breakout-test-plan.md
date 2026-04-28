@@ -40,8 +40,8 @@ Ping Validation for IPv4 and IPv6 on DUT.
 - IPv6: `ping6 <IPv6-peer>`
 
 ### Note:
-i. Verify the optics support for channelization speeds (800G, 400G, 100G) and execute the breakout configuration accordingly.
-ii. Breakout should be done for both Fanout and DUT
+- 'Verify the optics support for channelization speeds (800G, 400G, 100G) and execute the breakout configuration accordingly'
+- 'Breakout should be done for both Fanout and DUT'
 
 ```md
 ## Test cases
